@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 
 Route::get('/', [ProductController::class, 'index']);
-Route::get('/get-produts', [ProductController::class, 'getProduts']);
+Route::get('/get-products', [ProductController::class, 'getProducts']);
 Route::get('/edit/{id}', [ProductController::class, 'edit']);
-Route::get('/store', [ProductController::class, 'store']);
-Route::get('/update', [ProductController::class, 'update']);
+Route::post('/store', [ProductController::class, 'store']);
+Route::post('/update', [ProductController::class, 'update']);

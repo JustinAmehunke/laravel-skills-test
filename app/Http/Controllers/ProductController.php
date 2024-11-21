@@ -19,6 +19,7 @@ class ProductController extends Controller
     }
 
     public function edit($id){
+
         $jsonFilePath = \storage_path('app/products.json');
 
         $products = file_exists($jsonFilePath) ? json_decode(file_get_contents($jsonFilePath, true)) : [];
@@ -33,6 +34,12 @@ class ProductController extends Controller
     }
 
     public function store(Request $request){
+        $request->validate([
+			'name' => 'required|string',
+			'quantity' => 'required|numeric',
+			'price' => 'required|numeric'
+		]);
+
         $jsonFilePath = storage_path('app/products.json');
 
         if(!file_exists($jsonFilePath)){
@@ -57,6 +64,12 @@ class ProductController extends Controller
 
     }
     public function update(Request $request){
+
+        $request->validate([
+			'name' => 'required|string',
+			'quantity' => 'required|numeric',
+			'price' => 'required|numeric'
+		]);
  
         $jsonFilePath = storage_path('app/products.json');
 
