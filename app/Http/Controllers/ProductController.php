@@ -11,27 +11,73 @@ class ProductController extends Controller
     }
 
     public function getProducts(){
-        $jsonPath = \storage_path('app/products.json');
+        $jsonFilePath = storage_path("app/products.json");
 
-        if(!file_exists($jsonPath)){
-            file_put_contents($jsonPath, json_encode([]));
-        }
+        $products = file_exists($jsonFilePath)? json_decode(file_get_contents($jsonFilePath, true)): [];
 
-        $products = file_get_contents($jsonPath, true);
-
-        return \response()->json(["product"=>$products]);
+        return response()->json(["products"=>$products]);
     }
+
     public function edit($id){
-        $jsonPath = \storage_path('app/products.json');
-        
+        $jsonFilePath = \storage_path('app/products.json');
+
+        $products = file_exists($jsonFilePath) ? json_decode(file_get_contents($jsonFilePath, true)) : [];
+
+        $productIndex = $id;
+
+        if(isset($products[$productIndex])){
+            return response()->json($products[$productIndex]);
+        }else{
+            return response()->json(["error"=> "Something went wrong"]);
+        }
     }
 
     public function store(Request $request){
+        $jsonFilePath = storage_path('app/products.json');
 
+        if(!file_exists($jsonFilePath)){
+            file_put_contents($jsonFilePath, json_encode([]));
+        }
+
+        $products = json_decode(file_get_contents($jsonFilePath, true));
+
+        $newProduct = [
+            "name" => $request->name,
+            "quantity" => $request->quantity,
+            "price" => $request->price,
+            'total_value' => $request->quantity * $request->price,
+            "datetime" => now()
+        ];
+
+        $products[] = $newProduct;
+
+        file_put_contents($jsonFilePath, json_encode($products, JSON_PRETTY_PRINT) );
+
+        return \response()->json($products);
 
     }
-
     public function update(Request $request){
+ 
+        $jsonFilePath = storage_path('app/products.json');
 
+      
+        $products = file_exists($jsonFilePath) ? json_decode(file_get_contents($jsonFilePath, true)) : [];
+
+        $productIndex = $request->id;
+
+        if(isset($products[$productIndex])){
+            $products[$productIndex] = [
+                "name" => $request->name,
+                "quantity" => $request->quantity,
+                "price" => $request->price,
+                "datetime" => now(),
+                "total_value" => $request->quantity * $request->price,
+            ];
+    
+            file_put_contents($jsonFilePath, json_encode($products, JSON_PRETTY_PRINT));
+            return response()->json($products[$productIndex]);
+        }else{
+            return response()->json(["error"=> "Something went wrong"]);
+        }
     }
 }
